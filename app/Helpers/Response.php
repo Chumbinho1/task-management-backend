@@ -14,7 +14,7 @@ function ok(JsonResource|AnonymousResourceCollection|array $data): JsonResponse
 function created(?string $item = null): JsonResponse
 {
     return response()->json([
-        'message' => $item ? `${$item} created successfully!` : 'Created successfully!',
+        'message' => $item ? "{$item} created successfully!" : 'Created successfully!',
     ], Response::HTTP_CREATED);
 }
 

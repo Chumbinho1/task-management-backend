@@ -43,4 +43,18 @@ class TaskController extends Controller
             return internalServerError($e);
         }
     }
+
+    public function destroy(
+        string $id,
+    ): JsonResponse {
+        try {
+            $this->taskService->delete($id);
+
+            return ok(['message' => 'Task deleted successfully!']);
+        } catch (NotFoundException $e) {
+            return notFound($e->getMessage());
+        } catch (\Exception $e) {
+            return internalServerError($e);
+        }
+    }
 }

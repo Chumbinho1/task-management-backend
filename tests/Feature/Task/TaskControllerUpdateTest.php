@@ -75,6 +75,16 @@ class TaskControllerUpdateTest extends TestCase
         ]);
     }
 
+    public function test_task_update_route_unauthenticated(): void
+    {
+        $response = $this->putJson("{$this->endpoint}/{$this->task->id}", [
+            'title' => 'Task title',
+            'description' => 'Task description',
+            'taskStatusId' => TaskStatus::firstWhere('slug', 'in-progress')->id, ]);
+
+        $response->assertUnauthorized();
+    }
+
     public function test_task_update_route_with_invalid_task_status_id(): void
     {
         $response = $this->actingAs($this->user)->putJson("{$this->endpoint}/{$this->task->id}", [

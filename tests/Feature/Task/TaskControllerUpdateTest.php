@@ -5,7 +5,6 @@ namespace Tests\Feature\Task;
 use App\Models\Task;
 use App\Models\TaskStatus;
 use App\Models\User;
-use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class TaskControllerUpdateTest extends TestCase
@@ -13,6 +12,7 @@ class TaskControllerUpdateTest extends TestCase
     protected string $endpoint = '/api/tasks';
 
     protected User $user;
+
     protected Task $task;
 
     public function setUp(): void

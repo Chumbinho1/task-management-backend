@@ -9,16 +9,13 @@ use Illuminate\Support\Facades\DB;
 class TaskService
 {
     public function __construct(
-        protected Task              $taskModel,
+        protected Task $taskModel,
         protected TaskStatusService $taskStatusService
-    )
-    {
-    }
+    ) {}
 
     public function create(
         array $data
-    ): Task
-    {
+    ): Task {
         return DB::transaction(function () use ($data) {
             $data['user_id'] = auth()->id();
             $data['task_status_id'] = $this->taskStatusService->getTaskStatusBySlug('to-do')->id;
@@ -29,9 +26,8 @@ class TaskService
 
     public function update(
         string $id,
-        array  $data
-    ): Task
-    {
+        array $data
+    ): Task {
         return DB::transaction(function () use ($id, $data) {
             $task = $this->getTaskById($id);
             $task->update(convertKeysToSnakeCase($data));
@@ -40,10 +36,11 @@ class TaskService
         });
     }
 
-    public function getTaskById(string $id): Task {
+    public function getTaskById(string $id): Task
+    {
         $task = $this->taskModel->find($id);
 
-        throw_if(!$task, NotFoundException::class, 'Task');
+        throw_if(! $task, NotFoundException::class, 'Task');
 
         return $task;
     }

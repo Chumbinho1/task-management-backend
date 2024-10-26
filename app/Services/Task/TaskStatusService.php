@@ -9,19 +9,15 @@ class TaskStatusService
 {
     public function __construct(
         protected TaskStatus $taskStatusModel
-    )
-    {
-    }
+    ) {}
 
     public function getTaskStatusBySlug(
         string $slug
-    ): TaskStatus
-    {
+    ): TaskStatus {
         $taskStatus = $this->taskStatusModel->where('slug', $slug)->first();
 
-        throw_if(!$taskStatus, NotFoundException::class, 'Task');
+        throw_if(! $taskStatus, NotFoundException::class, 'Task');
 
         return $taskStatus;
     }
-
 }

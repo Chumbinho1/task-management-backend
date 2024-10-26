@@ -13,14 +13,11 @@ class TaskController extends Controller
 {
     public function __construct(
         protected TaskService $taskService
-    )
-    {
-    }
+    ) {}
 
     public function store(
         TaskStoreRequest $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         try {
             $this->taskService->create($request->validated());
 
@@ -35,10 +32,9 @@ class TaskController extends Controller
     public function update(
         string $id,
         TaskUpdateRequest $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         try {
-            $this->taskService->update($id,$request->validated());
+            $this->taskService->update($id, $request->validated());
 
             return ok(['message' => 'Task updated successfully!']);
         } catch (NotFoundException $e) {

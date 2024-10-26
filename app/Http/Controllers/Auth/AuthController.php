@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Exceptions\InvalidCredentialsException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\SigninRequest;
-use App\Http\Requests\Auth\SignupRequest;
+use App\Http\Requests\Auth\AuthSigninRequest;
+use App\Http\Requests\Auth\AuthSignupRequest;
 use App\Http\Resources\Auth\SigninResource;
 use App\Services\Auth\AuthService;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +17,7 @@ class AuthController extends Controller
     ) {}
 
     public function signup(
-        SignupRequest $request
+        AuthSignupRequest $request
     ): JsonResponse {
         try {
             $this->authService->signup($request->validated());
@@ -29,7 +29,7 @@ class AuthController extends Controller
     }
 
     public function signin(
-        SigninRequest $request
+        AuthSigninRequest $request
     ): JsonResponse {
         try {
             return ok(SigninResource::make($this->authService->signin($request->validated())));

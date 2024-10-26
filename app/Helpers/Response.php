@@ -18,6 +18,13 @@ function created(?string $item = null): JsonResponse
     ], Response::HTTP_CREATED);
 }
 
+function notFound(string $item): JsonResponse
+{
+    return response()->json([
+        'message' => $item ? "{$item} not found!" : 'Not found!',
+    ], Response::HTTP_NOT_FOUND);
+}
+
 function internalServerError(\Exception $exception): JsonResponse
 {
     Log::error($exception->getMessage(), $exception->getTrace());

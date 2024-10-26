@@ -1,24 +1,29 @@
 <?php
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
-function ok(mixed $data): JsonResponse
+function ok(JsonResource|AnonymousResourceCollection|array $data): JsonResponse
 {
     return response()->json($data, Response::HTTP_OK);
 }
 
-function created(string $message = 'Resource created!'): JsonResponse
+function created(?string $item = null): JsonResponse
 {
     return response()->json([
-        'message' => $message,
+        'message' => $item ? `${$item} created successfully!` : 'Created successfully!',
     ], Response::HTTP_CREATED);
 }
 
-function internalServerError(string $message = 'Something went wrong!'): JsonResponse
+function internalServerError(\Exception $exception): JsonResponse
 {
+    Log::error($exception->getMessage(), $exception->getTrace());
+
     return response()->json([
-        'message' => $message,
+        'message' => 'Internal server error!',
     ], Response::HTTP_INTERNAL_SERVER_ERROR);
 }
 

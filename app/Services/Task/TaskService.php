@@ -36,6 +36,15 @@ class TaskService
         });
     }
 
+    public function delete(string $id): ?bool
+    {
+        return DB::transaction(function () use ($id) {
+            $task = $this->getTaskById($id);
+
+            return $task->delete();
+        });
+    }
+
     public function getTaskById(string $id): Task
     {
         $task = $this->taskModel->find($id);

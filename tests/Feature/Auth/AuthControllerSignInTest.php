@@ -9,6 +9,7 @@ use Tests\TestCase;
 class AuthControllerSignInTest extends TestCase
 {
     protected string $endpoint = '/api/auth/signin';
+
     protected User $user;
 
     public function setUp(): void
@@ -30,7 +31,7 @@ class AuthControllerSignInTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
 
         $response->assertJsonStructure([
-            'accessToken'
+            'accessToken',
         ]);
     }
 

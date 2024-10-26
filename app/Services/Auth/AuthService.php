@@ -14,7 +14,7 @@ class AuthService
 
     public function signup(array $data): User
     {
-        return $this->userModel->create($data);
+        return $this->userModel->create(convertKeysToSnakeCase($data));
     }
 
     public function signin(array $data): NewAccessToken

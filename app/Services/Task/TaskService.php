@@ -13,7 +13,9 @@ class TaskService
     {
     }
 
-    public function create(array $data): Task
+    public function create(
+        array $data
+    ): Task
     {
         $data['user_id'] = auth()->id();
         $data['task_status_id'] = $this->taskStatusService->getTaskStatusBySlug('to-do')->id;

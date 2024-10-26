@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\TaskStoreRequest;
 use App\Services\Task\TaskService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -17,7 +16,9 @@ class TaskController extends Controller
     {
     }
 
-    public function store(TaskStoreRequest $request): JsonResponse
+    public function store(
+        TaskStoreRequest $request
+    ): JsonResponse
     {
         try {
             $this->taskService->create($request->validated());

@@ -13,7 +13,9 @@ class TaskStatusService
     {
     }
 
-    public function getTaskStatusBySlug(string $slug): TaskStatus
+    public function getTaskStatusBySlug(
+        string $slug
+    ): TaskStatus
     {
         $taskStatus = $this->taskStatusModel->where('slug', $slug)->first();
 

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('description');
             $table->string('slug');
+            $table->integer('position');
             $table->timestamps();
         });
     }

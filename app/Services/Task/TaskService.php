@@ -38,8 +38,7 @@ class TaskService
 
     public function delete(
         string $id
-    ): ?bool
-    {
+    ): ?bool {
         return DB::transaction(function () use ($id) {
             $task = $this->getTaskById($id);
 
@@ -49,8 +48,7 @@ class TaskService
 
     public function getTaskById(
         string $id
-    ): Task
-    {
+    ): Task {
         $task = $this->taskModel->find($id);
 
         throw_if(! $task, NotFoundException::class, 'Task');

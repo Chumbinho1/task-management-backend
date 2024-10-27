@@ -11,17 +11,17 @@ return new class extends Migration
             [
                 'description' => 'To Do',
                 'slug' => 'to-do',
-                'position' => 1,
+                'order' => 1,
             ],
             [
                 'description' => 'In Progress',
                 'slug' => 'in-progress',
-                'position' => 2,
+                'order' => 2,
             ],
             [
                 'description' => 'Done',
                 'slug' => 'done',
-                'position' => 3,
+                'order' => 3,
             ],
         ];
 

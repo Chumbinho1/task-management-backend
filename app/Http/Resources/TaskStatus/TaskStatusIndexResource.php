@@ -13,7 +13,7 @@ class TaskStatusIndexResource extends JsonResource
             'id' => $this->id,
             'description' => $this->description,
             'slug' => $this->slug,
-            'position' => $this->position,
+            'order' => $this->order,
         ];
     }
 }

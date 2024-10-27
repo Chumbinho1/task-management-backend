@@ -10,7 +10,7 @@ class TaskStatus extends Model
     protected $fillable = [
         'description',
         'slug',
-        'position',
+        'order',
     ];
 
     public function tasks(): HasMany

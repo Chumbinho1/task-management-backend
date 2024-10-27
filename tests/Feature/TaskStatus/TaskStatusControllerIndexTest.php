@@ -36,7 +36,7 @@ class TaskStatusControllerIndexTest extends TestCase
                     'id',
                     'description',
                     'slug',
-                    'position',
+                    'order',
                 ],
             ],
         ]);

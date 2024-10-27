@@ -24,6 +24,6 @@ class TaskStatusService
 
     public function getAll(): Collection
     {
-        return $this->taskStatusModel->orderBy('order')->get();
+        return $this->taskStatusModel->orderBy('position')->get();
     }
 }

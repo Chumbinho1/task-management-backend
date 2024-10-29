@@ -3,17 +3,31 @@
 namespace App\Http\Controllers\TaskModule;
 
 use App\Exceptions\NotFoundException;
+use App\Filters\TaskModule\Task\TaskIndexFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\TaskStoreRequest;
 use App\Http\Requests\Task\TaskUpdateRequest;
+use App\Http\Resources\Task\TaskIndexResource;
 use App\Services\Task\TaskService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TaskController extends Controller
 {
     public function __construct(
         protected TaskService $taskService
     ) {}
+
+    public function index(
+        TaskIndexFilters $filters
+    ): JsonResponse|AnonymousResourceCollection {
+
+        try {
+            return TaskIndexResource::collection($this->taskService->getAll($filters, $filters->getPerPage()));
+        } catch (\Exception $e) {
+            return internalServerError($e);
+        }
+    }
 
     public function store(
         TaskStoreRequest $request

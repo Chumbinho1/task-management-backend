@@ -5,106 +5,84 @@ namespace Tests\Feature\Task;
 use App\Models\Task;
 use App\Models\TaskStatus;
 use App\Models\User;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class TaskControllerUpdateTest extends TestCase
 {
     protected string $endpoint = '/api/tasks';
-
     protected User $user;
-
     protected Task $task;
+    protected array $successMessage = ['message' => 'Task updated successfully!'];
 
     public function setUp(): void
     {
         parent::setUp();
-
         $this->user = User::factory()->create();
         $this->task = Task::factory()->create([
             'task_status_id' => TaskStatus::firstWhere('slug', 'to-do')->id,
         ]);
     }
 
-    public function test_task_update_route(): void
+    public function test_update_task(): void
     {
-        $response = $this->actingAs($this->user)->putJson("{$this->endpoint}/{$this->task->id}", [
+        $this->updateTask([
             'title' => 'Task title',
             'description' => 'Task description',
             'taskStatusId' => TaskStatus::firstWhere('slug', 'in-progress')->id,
-        ]);
-
-        $response->assertOk();
-        $response->assertJsonFragment([
-            'message' => 'Task updated successfully!',
-        ]);
+        ])->assertOk()->assertJsonFragment($this->successMessage);
     }
 
-    public function test_task_update_route_update_title(): void
+    public function test_update_task_title_only(): void
     {
-        $response = $this->actingAs($this->user)->putJson("{$this->endpoint}/{$this->task->id}", [
-            'title' => 'Task title',
-        ]);
-
-        $response->assertOk();
-        $response->assertJsonFragment([
-            'message' => 'Task updated successfully!',
-        ]);
+        $this->updateTask(['title' => 'Task title'])
+            ->assertOk()
+            ->assertJsonFragment($this->successMessage);
     }
 
-    public function test_task_update_route_update_description(): void
+    public function test_update_task_description_only(): void
     {
-        $response = $this->actingAs($this->user)->putJson("{$this->endpoint}/{$this->task->id}", [
-            'description' => 'Task description',
-        ]);
-
-        $response->assertOk();
-        $response->assertJsonFragment([
-            'message' => 'Task updated successfully!',
-        ]);
+        $this->updateTask(['description' => 'Task description'])
+            ->assertOk()
+            ->assertJsonFragment($this->successMessage);
     }
 
-    public function test_task_update_route_update_task_status_id(): void
+    public function test_update_task_status_only(): void
     {
-        $response = $this->actingAs($this->user)->putJson("{$this->endpoint}/{$this->task->id}", [
-            'taskStatusId' => TaskStatus::firstWhere('slug', 'in-progress')->id,
-        ]);
-
-        $response->assertOk();
-        $response->assertJsonFragment([
-            'message' => 'Task updated successfully!',
-        ]);
+        $this->updateTask(['taskStatusId' => TaskStatus::firstWhere('slug', 'in-progress')->id])
+            ->assertOk()
+            ->assertJsonFragment($this->successMessage);
     }
 
-    public function test_task_update_route_unauthenticated(): void
+    public function test_update_task_unauthenticated(): void
     {
         $response = $this->putJson("{$this->endpoint}/{$this->task->id}", [
             'title' => 'Task title',
             'description' => 'Task description',
-            'taskStatusId' => TaskStatus::firstWhere('slug', 'in-progress')->id, ]);
-
+            'taskStatusId' => TaskStatus::firstWhere('slug', 'in-progress')->id,
+        ]);
         $response->assertUnauthorized();
     }
 
-    public function test_task_update_route_with_invalid_task_status_id(): void
+    public function test_update_task_invalid_status_id(): void
     {
-        $response = $this->actingAs($this->user)->putJson("{$this->endpoint}/{$this->task->id}", [
-            'taskStatusId' => 'teste',
-        ]);
-
-        $response->assertUnprocessable();
-        $response->assertJsonValidationErrors([
-            'taskStatusId',
-        ]);
+        $this->updateTask(['taskStatusId' => 'teste'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['taskStatusId']);
     }
 
-    public function test_task_update_route_with_invalid_task_id(): void
+    public function test_update_task_invalid_task_id(): void
     {
         $response = $this->actingAs($this->user)->putJson("{$this->endpoint}/teste", [
             'title' => 'Task title',
             'description' => 'Task description',
             'taskStatusId' => TaskStatus::firstWhere('slug', 'in-progress')->id,
         ]);
-
         $response->assertNotFound();
+    }
+
+    private function updateTask(array $data): TestResponse
+    {
+        return $this->actingAs($this->user)->putJson("{$this->endpoint}/{$this->task->id}", $data);
     }
 }

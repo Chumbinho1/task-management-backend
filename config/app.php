@@ -123,4 +123,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'perPage' => env('APP_PER_PAGE', env('APP_PER_PAGE')),
 ];

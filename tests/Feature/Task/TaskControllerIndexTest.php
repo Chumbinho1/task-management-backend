@@ -37,7 +37,7 @@ class TaskControllerIndexTest extends TestCase
     public function test_index_routeJsonStructure(): void
     {
         $response = $this->makeApiCall();
-        $response->assertJsonStructure([
+        $response->assertExactJsonStructure([
             'data' => [
                 '*' => [
                     'id',
@@ -47,11 +47,14 @@ class TaskControllerIndexTest extends TestCase
                         'id',
                         'description',
                         'slug',
+                        'order',
                     ],
                     'createdAt',
                     'updatedAt',
                 ],
             ],
+            'links',
+            'meta',
         ]);
     }
 

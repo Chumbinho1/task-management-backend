@@ -30,7 +30,7 @@ class AuthControllerSignInTest extends TestCase
         $response = $this->makeSignInRequest(self::CORRECT_EMAIL, 'password');
 
         $response->assertOk();
-        $response->assertJsonStructure([
+        $response->assertExactJsonStructure([
             'accessToken',
         ]);
     }
@@ -40,7 +40,7 @@ class AuthControllerSignInTest extends TestCase
         $response = $this->makeSignInRequest(self::INCORRECT_EMAIL, 'password');
 
         $response->assertUnauthorized();
-        $response->assertJsonStructure([
+        $response->assertExactJsonStructure([
             'message',
         ]);
     }
@@ -50,7 +50,7 @@ class AuthControllerSignInTest extends TestCase
         $response = $this->makeSignInRequest(self::CORRECT_EMAIL, 'incorrect');
 
         $response->assertUnauthorized();
-        $response->assertJsonStructure([
+        $response->assertExactJsonStructure([
             'message',
         ]);
     }

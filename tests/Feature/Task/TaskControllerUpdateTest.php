@@ -16,8 +16,6 @@ class TaskControllerUpdateTest extends TestCase
 
     protected Task $task;
 
-    protected array $successMessage = ['message' => 'Task updated successfully!'];
-
     public function setUp(): void
     {
         parent::setUp();
@@ -33,28 +31,28 @@ class TaskControllerUpdateTest extends TestCase
             'title' => 'Task title',
             'description' => 'Task description',
             'taskStatusId' => TaskStatus::firstWhere('slug', 'in-progress')->id,
-        ])->assertOk()->assertJsonFragment($this->successMessage);
+        ])->assertOk()->assertJsonFragment(['message' => 'Task updated successfully!']);
     }
 
     public function test_update_task_title_only(): void
     {
         $this->updateTask(['title' => 'Task title'])
             ->assertOk()
-            ->assertJsonFragment($this->successMessage);
+            ->assertJsonFragment(['message' => 'Task updated successfully!']);
     }
 
     public function test_update_task_description_only(): void
     {
         $this->updateTask(['description' => 'Task description'])
             ->assertOk()
-            ->assertJsonFragment($this->successMessage);
+            ->assertJsonFragment(['message' => 'Task updated successfully!']);
     }
 
     public function test_update_task_status_only(): void
     {
         $this->updateTask(['taskStatusId' => TaskStatus::firstWhere('slug', 'in-progress')->id])
             ->assertOk()
-            ->assertJsonFragment($this->successMessage);
+            ->assertJsonFragment(['message' => 'Task updated successfully!']);
     }
 
     public function test_update_task_unauthenticated(): void

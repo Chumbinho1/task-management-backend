@@ -6,7 +6,7 @@ use App\Http\Resources\TaskStatus\TaskStatusShowResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TaskIndexResource extends JsonResource
+class TaskShowResource extends JsonResource
 {
     public function toArray(Request $request): array
     {

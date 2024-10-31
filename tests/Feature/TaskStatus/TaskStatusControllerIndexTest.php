@@ -13,17 +13,6 @@ class TaskStatusControllerIndexTest extends TestCase
 
     protected User $user;
 
-    private const JSON_STRUCTURE = [
-        'data' => [
-            '*' => [
-                'id',
-                'description',
-                'slug',
-                'order',
-            ],
-        ],
-    ];
-
     public function setUp(): void
     {
         parent::setUp();
@@ -39,7 +28,16 @@ class TaskStatusControllerIndexTest extends TestCase
     public function test_task_status_index_route_json_structure(): void
     {
         $response = $this->makeAuthenticatedRequest();
-        $response->assertJsonStructure(self::JSON_STRUCTURE);
+        $response->assertExactJsonStructure([
+            'data' => [
+                '*' => [
+                    'id',
+                    'description',
+                    'slug',
+                    'order',
+                ],
+            ],
+        ]);
     }
 
     public function test_task_status_index_route_unauthenticated(): void

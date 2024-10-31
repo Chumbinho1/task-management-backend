@@ -8,9 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\TaskStoreRequest;
 use App\Http\Requests\Task\TaskUpdateRequest;
 use App\Http\Resources\Task\TaskIndexResource;
+use App\Http\Resources\Task\TaskShowResource;
 use App\Services\Task\TaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class TaskController extends Controller
 {
@@ -21,9 +23,20 @@ class TaskController extends Controller
     public function index(
         TaskIndexFilters $filters
     ): JsonResponse|AnonymousResourceCollection {
-
         try {
             return TaskIndexResource::collection($this->taskService->getAll($filters, $filters->getPerPage()));
+        } catch (\Exception $e) {
+            return internalServerError($e);
+        }
+    }
+
+    public function show(
+        string $id
+    ): JsonResponse|JsonResource {
+        try {
+            return ok(TaskShowResource::make($this->taskService->getById($id)));
+        } catch (NotFoundException $e) {
+            return notFound($e->getMessage());
         } catch (\Exception $e) {
             return internalServerError($e);
         }

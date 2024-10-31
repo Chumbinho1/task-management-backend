@@ -15,6 +15,16 @@ class TaskService
         protected TaskStatusService $taskStatusService
     ) {}
 
+    public function getById(
+        string $id
+    ): Task {
+        $task = $this->taskModel->with('taskStatus')->find($id);
+
+        throw_if(! $task, NotFoundException::class, 'Task');
+
+        return $task;
+    }
+
     public function getAll(
         QueryFilters $filters,
         int $perPage
@@ -40,7 +50,7 @@ class TaskService
         array $data
     ): Task {
         return DB::transaction(function () use ($id, $data) {
-            $task = $this->getTaskById($id);
+            $task = $this->getById($id);
             $task->update(convertKeysToSnakeCase($data));
 
             return $task->fresh();
@@ -51,19 +61,9 @@ class TaskService
         string $id
     ): ?bool {
         return DB::transaction(function () use ($id) {
-            $task = $this->getTaskById($id);
+            $task = $this->getById($id);
 
             return $task->delete();
         });
-    }
-
-    public function getTaskById(
-        string $id
-    ): Task {
-        $task = $this->taskModel->find($id);
-
-        throw_if(! $task, NotFoundException::class, 'Task');
-
-        return $task;
     }
 }

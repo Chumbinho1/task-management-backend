@@ -11,14 +11,28 @@ use Illuminate\Support\Facades\DB;
 class TaskService
 {
     public function __construct(
-        protected Task $taskModel,
+        protected Task              $taskModel,
         protected TaskStatusService $taskStatusService
-    ) {}
+    )
+    {
+    }
+
+    public function getById(
+        string $id
+    ): Task
+    {
+        $task = $this->taskModel->with('taskStatus')->find($id);
+
+        throw_if(!$task, NotFoundException::class, 'Task');
+
+        return $task;
+    }
 
     public function getAll(
         QueryFilters $filters,
-        int $perPage
-    ): LengthAwarePaginator {
+        int          $perPage
+    ): LengthAwarePaginator
+    {
         return $this->taskModel->filter($filters)
             ->with('taskStatus')
             ->paginate($perPage);
@@ -26,7 +40,8 @@ class TaskService
 
     public function create(
         array $data
-    ): Task {
+    ): Task
+    {
         return DB::transaction(function () use ($data) {
             $data['user_id'] = auth()->id();
             $data['task_status_id'] = $this->taskStatusService->getTaskStatusBySlug('to-do')->id;
@@ -37,10 +52,11 @@ class TaskService
 
     public function update(
         string $id,
-        array $data
-    ): Task {
+        array  $data
+    ): Task
+    {
         return DB::transaction(function () use ($id, $data) {
-            $task = $this->getTaskById($id);
+            $task = $this->getById($id);
             $task->update(convertKeysToSnakeCase($data));
 
             return $task->fresh();
@@ -49,21 +65,12 @@ class TaskService
 
     public function delete(
         string $id
-    ): ?bool {
+    ): ?bool
+    {
         return DB::transaction(function () use ($id) {
-            $task = $this->getTaskById($id);
+            $task = $this->getById($id);
 
             return $task->delete();
         });
-    }
-
-    public function getTaskById(
-        string $id
-    ): Task {
-        $task = $this->taskModel->find($id);
-
-        throw_if(! $task, NotFoundException::class, 'Task');
-
-        return $task;
     }
 }

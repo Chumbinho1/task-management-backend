@@ -8,19 +8,24 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\TaskStoreRequest;
 use App\Http\Requests\Task\TaskUpdateRequest;
 use App\Http\Resources\Task\TaskIndexResource;
+use App\Http\Resources\Task\TaskShowResource;
 use App\Services\Task\TaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class TaskController extends Controller
 {
     public function __construct(
         protected TaskService $taskService
-    ) {}
+    )
+    {
+    }
 
     public function index(
         TaskIndexFilters $filters
-    ): JsonResponse|AnonymousResourceCollection {
+    ): JsonResponse|AnonymousResourceCollection
+    {
 
         try {
             return TaskIndexResource::collection($this->taskService->getAll($filters, $filters->getPerPage()));
@@ -29,9 +34,23 @@ class TaskController extends Controller
         }
     }
 
+    public function show(
+        string $id
+    ): JsonResponse|JsonResource
+    {
+        try {
+            return ok(TaskShowResource::make($this->taskService->getById($id)));
+        } catch (NotFoundException $e) {
+            return notFound($e->getMessage());
+        } catch (\Exception $e) {
+            return internalServerError($e);
+        }
+    }
+
     public function store(
         TaskStoreRequest $request
-    ): JsonResponse {
+    ): JsonResponse
+    {
         try {
             $this->taskService->create($request->validated());
 
@@ -44,9 +63,10 @@ class TaskController extends Controller
     }
 
     public function update(
-        string $id,
+        string            $id,
         TaskUpdateRequest $request
-    ): JsonResponse {
+    ): JsonResponse
+    {
         try {
             $this->taskService->update($id, $request->validated());
 
@@ -60,7 +80,8 @@ class TaskController extends Controller
 
     public function destroy(
         string $id,
-    ): JsonResponse {
+    ): JsonResponse
+    {
         try {
             $this->taskService->delete($id);
 

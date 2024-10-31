@@ -10,7 +10,9 @@ class AuthService
 {
     public function __construct(
         protected User $userModel
-    ) {}
+    )
+    {
+    }
 
     public function signup(array $data): User
     {
@@ -21,8 +23,15 @@ class AuthService
     {
         $user = $this->userModel->where('email', $data['email'])->first();
 
-        throw_if(! $user || ! password_verify($data['password'], $user->password), InvalidCredentialsException::class, 'Invalid credentials.');
+        throw_if(!$user || !password_verify($data['password'], $user->password), InvalidCredentialsException::class, 'Invalid credentials.');
 
         return $user->createToken('authToken');
+    }
+
+    public function signout(): void
+    {
+        if ($user = auth()->user()) {
+            $user->tokens()->delete();
+        }
     }
 }

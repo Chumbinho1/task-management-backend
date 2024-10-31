@@ -23,7 +23,6 @@ class TaskController extends Controller
     public function index(
         TaskIndexFilters $filters
     ): JsonResponse|AnonymousResourceCollection {
-
         try {
             return TaskIndexResource::collection($this->taskService->getAll($filters, $filters->getPerPage()));
         } catch (\Exception $e) {

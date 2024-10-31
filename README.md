@@ -39,7 +39,7 @@ Welcome to the backend of the Task Manager application! This backend is built on
     - Authenticates a user and provides a token.
 
 - **Sign Out**
-    - `POST /auth/logout`
+    - `POST /auth/signout`
     - Invalidates the user's token and sign out securely.
 
 ### Task Management

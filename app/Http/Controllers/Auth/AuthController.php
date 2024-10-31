@@ -14,11 +14,14 @@ class AuthController extends Controller
 {
     public function __construct(
         protected AuthService $authService
-    ) {}
+    )
+    {
+    }
 
     public function signup(
         AuthSignupRequest $request
-    ): JsonResponse {
+    ): JsonResponse
+    {
         try {
             $this->authService->signup($request->validated());
 
@@ -30,11 +33,22 @@ class AuthController extends Controller
 
     public function signin(
         AuthSigninRequest $request
-    ): JsonResponse {
+    ): JsonResponse
+    {
         try {
             return ok(SigninResource::make($this->authService->signin($request->validated())));
         } catch (InvalidCredentialsException $e) {
             return unauthorized($e->getMessage());
+        } catch (\Exception $e) {
+            return internalServerError($e);
+        }
+    }
+
+    public function signout(): JsonResponse
+    {
+        try {
+            $this->authService->signout();
+            return ok(['message' => 'Signed out successfully!']);
         } catch (\Exception $e) {
             return internalServerError($e);
         }

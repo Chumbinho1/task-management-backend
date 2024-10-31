@@ -15,58 +15,42 @@ class TaskControllerStoreTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-
         $this->user = User::factory()->create();
     }
 
-    public function test_task_store_route(): void
+    public function test_task_store_with_valid_data(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->endpoint, [
+        $this->assertStoreResponse([
             'title' => 'Task title',
             'description' => 'Task description',
+        ], Response::HTTP_CREATED, [
+            'message' => 'Task created successfully!',
         ]);
 
-        $response->assertStatus(Response::HTTP_CREATED);
-        $response->assertJsonFragment([
+        $this->assertStoreResponse([
+            'title' => 'Task title',
+        ], Response::HTTP_CREATED, [
             'message' => 'Task created successfully!',
         ]);
     }
 
-    public function test_task_store_route_without_description(): void
+    public function test_task_store_with_missing_title(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->endpoint, [
-            'title' => 'Task title',
-        ]);
-
-        $response->assertStatus(Response::HTTP_CREATED);
-        $response->assertJsonFragment([
-            'message' => 'Task created successfully!',
-        ]);
-    }
-
-    public function test_task_store_route_without_title(): void
-    {
-        $response = $this->actingAs($this->user)->postJson($this->endpoint, [
+        $this->assertStoreResponse([
             'description' => 'Task description',
-        ]);
-
-        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response->assertJsonValidationErrors([
-            'title',
-        ]);
+        ], Response::HTTP_UNPROCESSABLE_ENTITY, [
+            'errors' => ['title'],
+        ], true);
     }
 
-    public function test_task_store_route_without_parameters(): void
+    public function test_task_store_with_missing_parameters(): void
     {
-        $response = $this->actingAs($this->user)->postJson($this->endpoint, []);
-
-        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response->assertJsonValidationErrors([
-            'title',
-        ]);
+        $this->assertStoreResponse([], Response::HTTP_UNPROCESSABLE_ENTITY, [
+            'errors' => ['title'],
+        ], true);
     }
 
-    public function test_task_store_route_unauthenticated(): void
+    public function test_task_store_unauthenticated(): void
     {
         $response = $this->postJson($this->endpoint, [
             'title' => 'Task title',
@@ -74,5 +58,18 @@ class TaskControllerStoreTest extends TestCase
         ]);
 
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    private function assertStoreResponse(array $data, int $status, array $jsonFragment, bool $checkErrors = false): void
+    {
+        $response = $this->actingAs($this->user)->postJson($this->endpoint, $data);
+
+        $response->assertStatus($status);
+
+        if ($checkErrors) {
+            $response->assertJsonValidationErrors($jsonFragment['errors']);
+        } else {
+            $response->assertJsonFragment($jsonFragment);
+        }
     }
 }

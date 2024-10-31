@@ -3,7 +3,9 @@
 namespace App\Services\Task;
 
 use App\Exceptions\NotFoundException;
+use App\Filters\QueryFilters;
 use App\Models\Task;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class TaskService
@@ -12,6 +14,15 @@ class TaskService
         protected Task $taskModel,
         protected TaskStatusService $taskStatusService
     ) {}
+
+    public function getAll(
+        QueryFilters $filters,
+        int $perPage
+    ): LengthAwarePaginator {
+        return $this->taskModel->filter($filters)
+            ->with('taskStatus')
+            ->paginate($perPage);
+    }
 
     public function create(
         array $data

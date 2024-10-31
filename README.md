@@ -19,7 +19,7 @@ Welcome to the backend of the Task Manager application! This backend is built on
 
 - **Sign Up**: Register new users.
 - **Sign In**: Authenticate users and provide a token for future requests.
-- **Logout**: Invalidate user tokens and log out securely.
+- **Sign Out**: Invalidate user tokens and sign out securely.
 
 ### Task Management
 
@@ -38,9 +38,9 @@ Welcome to the backend of the Task Manager application! This backend is built on
     - `POST /auth/signin`
     - Authenticates a user and provides a token.
 
-- **Logout**
+- **Sign Out**
     - `POST /auth/logout`
-    - Invalidates the user's token and logs out securely.
+    - Invalidates the user's token and sign out securely.
 
 ### Task Management
 

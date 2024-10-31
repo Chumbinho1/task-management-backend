@@ -9,6 +9,7 @@ use Tests\TestCase;
 class TaskControllerStoreTest extends TestCase
 {
     protected string $endpoint = '/api/tasks';
+
     protected User $user;
 
     public function setUp(): void

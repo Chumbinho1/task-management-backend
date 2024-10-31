@@ -10,6 +10,7 @@ use Tests\TestCase;
 class TaskStatusControllerIndexTest extends TestCase
 {
     protected string $endpoint = '/api/task-statuses';
+
     protected User $user;
 
     private const JSON_STRUCTURE = [
@@ -29,11 +30,6 @@ class TaskStatusControllerIndexTest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    private function makeAuthenticatedRequest(): TestResponse
-    {
-        return $this->actingAs($this->user)->getJson($this->endpoint);
-    }
-
     public function test_task_status_index_route(): void
     {
         $response = $this->makeAuthenticatedRequest();
@@ -50,5 +46,10 @@ class TaskStatusControllerIndexTest extends TestCase
     {
         $response = $this->getJson($this->endpoint);
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    private function makeAuthenticatedRequest(): TestResponse
+    {
+        return $this->actingAs($this->user)->getJson($this->endpoint);
     }
 }

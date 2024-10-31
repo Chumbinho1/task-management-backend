@@ -13,20 +13,18 @@ class QueryFilters
 
     public function __construct(
         Request $request
-    )
-    {
+    ) {
         $this->request = $request;
     }
 
     public function apply(
         Builder $builder,
         ?string $prefix = null
-    ): Builder
-    {
+    ): Builder {
         $this->builder = $builder;
 
         foreach ($this->filters($prefix) as $name => $value) {
-            if (!method_exists($this, $name)) {
+            if (! method_exists($this, $name)) {
                 continue;
             }
             if (is_array($value) || strlen($value)) {
@@ -39,13 +37,12 @@ class QueryFilters
 
     public function filters(
         ?string $prefix = null
-    ): array
-    {
+    ): array {
         $filters = $this->request->validated();
         if ($prefix) {
             $prefixParts = explode('.', $prefix);
             foreach ($prefixParts as $part) {
-                if (!isset($filters[$part])) {
+                if (! isset($filters[$part])) {
                     return [];
                 }
 

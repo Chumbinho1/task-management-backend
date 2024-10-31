@@ -11,8 +11,11 @@ use Tests\TestCase;
 class TaskControllerUpdateTest extends TestCase
 {
     protected string $endpoint = '/api/tasks';
+
     protected User $user;
+
     protected Task $task;
+
     protected array $successMessage = ['message' => 'Task updated successfully!'];
 
     public function setUp(): void

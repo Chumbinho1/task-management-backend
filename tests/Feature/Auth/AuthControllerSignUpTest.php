@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
@@ -8,9 +9,13 @@ use Tests\TestCase;
 class AuthControllerSignUpTest extends TestCase
 {
     protected string $endpoint = '/api/auth/signup';
+
     private const TEST_USER_NAME = 'Test User';
+
     private const TEST_USER_EMAIL = 'teste@teste.com';
+
     private const TEST_USER_PASSWORD = 'password';
+
     private const TEST_USER_WRONG_CONFIRMATION = 'password2';
 
     public function test_sign_up_route(): void

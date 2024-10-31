@@ -9,6 +9,7 @@ use Tests\TestCase;
 class AuthControllerSignInTest extends TestCase
 {
     private const CORRECT_EMAIL = 'teste@teste.com';
+
     private const INCORRECT_EMAIL = 'incorrect@teste.com';
 
     protected string $endpoint = '/api/auth/signin';

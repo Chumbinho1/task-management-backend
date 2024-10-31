@@ -15,6 +15,8 @@ class TaskIndexResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'taskStatus' => TaskStatusIndexResource::make($this->taskStatus),
+            'createdAt' => $this->created_at->format('d/m/Y H:i'),
+            'updatedAt' => $this->updated_at->format('d/m/Y H:i'),
         ];
     }
 }

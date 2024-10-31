@@ -12,6 +12,7 @@ use Tests\TestCase;
 class TaskControllerIndexTest extends TestCase
 {
     protected const ENDPOINT = '/api/tasks';
+
     protected User $user;
 
     public function setUp(): void
@@ -19,6 +20,85 @@ class TaskControllerIndexTest extends TestCase
         parent::setUp();
         $this->user = User::factory()->create();
         $this->createTasks();
+    }
+
+    public function test_index_route_unauthenticated(): void
+    {
+        $response = $this->getJson(self::ENDPOINT);
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_index_route(): void
+    {
+        $response = $this->makeApiCall();
+        $response->assertOk();
+    }
+
+    public function test_index_routeJsonStructure(): void
+    {
+        $response = $this->makeApiCall();
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'id',
+                    'title',
+                    'description',
+                    'taskStatus' => [
+                        'id',
+                        'description',
+                        'slug',
+                    ],
+                    'createdAt',
+                    'updatedAt',
+                ],
+            ],
+        ]);
+    }
+
+    public function test_index_routeWithTitleFilter(): void
+    {
+        $this->testFilter('title', 'Task title 1');
+    }
+
+    public function test_index_routeWithDescriptionFilter(): void
+    {
+        $this->testFilter('description', 'Task description 1');
+    }
+
+    public function test_index_routeWithTaskStatusIdFilter(): void
+    {
+        $this->testFilter('taskStatusId', TaskStatus::firstWhere('slug', 'in-progress')->id);
+    }
+
+    public function test_index_routeWithInvalidTaskStatusIdFilter(): void
+    {
+        $response = $this->makeApiCall(['taskStatusId' => 'asd']);
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['taskStatusId']);
+    }
+
+    public function test_index_routeWithPerPageFilter(): void
+    {
+        Task::factory(100)->create();
+        $response = $this->makeApiCall(['perPage' => 30]);
+        $response->assertOk();
+        $this->assertCount(30, $response->json('data'));
+    }
+
+    public function test_index_routeWithBelowMinimumPerPageFilter(): void
+    {
+        Task::factory(100)->create();
+        $response = $this->makeApiCall(['perPage' => 9]);
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors('perPage');
+    }
+
+    public function test_index_routeWithAboveMaximumPerPageFilter(): void
+    {
+        Task::factory(100)->create();
+        $response = $this->makeApiCall(['perPage' => 101]);
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors('perPage');
     }
 
     private function createTasks(): void
@@ -39,87 +119,11 @@ class TaskControllerIndexTest extends TestCase
         ];
     }
 
-    public function testIndexRouteUnauthenticated(): void
-    {
-        $response = $this->getJson(self::ENDPOINT);
-        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
-    }
-
-    public function testIndexRoute(): void
-    {
-        $response = $this->makeApiCall();
-        $response->assertOk();
-    }
-
-    public function testIndexRouteJsonStructure(): void
-    {
-        $response = $this->makeApiCall();
-        $response->assertJsonStructure([
-            'data' => [
-                '*' => [
-                    'id',
-                    'title',
-                    'description',
-                    'taskStatus' => [
-                        'id',
-                        'description',
-                        'slug',
-                    ],
-                ],
-            ],
-        ]);
-    }
-
-    public function testIndexRouteWithTitleFilter(): void
-    {
-        $this->testFilter('title', 'Task title 1');
-    }
-
-    public function testIndexRouteWithDescriptionFilter(): void
-    {
-        $this->testFilter('description', 'Task description 1');
-    }
-
-    public function testIndexRouteWithTaskStatusIdFilter(): void
-    {
-        $this->testFilter('taskStatusId', TaskStatus::firstWhere('slug', 'in-progress')->id);
-    }
-
-    public function testIndexRouteWithInvalidTaskStatusIdFilter(): void
-    {
-        $response = $this->makeApiCall(['taskStatusId' => 'asd']);
-        $response->assertUnprocessable();
-        $response->assertJsonValidationErrors(['taskStatusId']);
-    }
-
-    public function testIndexRouteWithPerPageFilter(): void
-    {
-        Task::factory(100)->create();
-        $response = $this->makeApiCall(['perPage' => 30]);
-        $response->assertOk();
-        $this->assertCount(30, $response->json('data'));
-    }
-
-    public function testIndexRouteWithBelowMinimumPerPageFilter(): void
-    {
-        Task::factory(100)->create();
-        $response = $this->makeApiCall(['perPage' => 9]);
-        $response->assertUnprocessable();
-        $response->assertJsonValidationErrors('perPage');
-    }
-
-    public function testIndexRouteWithAboveMaximumPerPageFilter(): void
-    {
-        Task::factory(100)->create();
-        $response = $this->makeApiCall(['perPage' => 101]);
-        $response->assertUnprocessable();
-        $response->assertJsonValidationErrors('perPage');
-    }
-
     private function makeApiCall(array $params = []): TestResponse
     {
         $query = http_build_query($params);
-        return $this->actingAs($this->user)->getJson(self::ENDPOINT . ($query ? "?{$query}" : ''));
+
+        return $this->actingAs($this->user)->getJson(self::ENDPOINT.($query ? "?{$query}" : ''));
     }
 
     private function testFilter(string $filter, string|int $value): void
